@@ -7,6 +7,7 @@
 <meta name="Description" content="Enter your description here"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
 <link rel="stylesheet" href="assets/css/style.css">
 <title>A & J's Horse transporting service</title>
 </head>
@@ -64,13 +65,23 @@
 
     <div id="container-center">
         <div id="container">
-            <div class="box">place</div>
-            <div class="box">place</div>
+            <div class="box">
+                <h2>Select Pickup and Dropoff Locations</h2>
+                <p>Click on the map to add points (first = pickup, rest = dropoffs)</p>
+                <div id="map"></div>
+                <button id="clearBtn">Clear All</button>
+                <div id="distance">Total Distance: 0 miles</div>
+            </div>
+            <div class="box">
+
+            </div>
         </div>
     </div>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="https://kit.fontawesome.com/e65044661a.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script> <!-- Popper -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> <!-- Bootstrap JS -->
+    <script src="script.js"></script>
 </body>
 </html>

@@ -97,7 +97,6 @@ a {
     margin:3%;
     background-color: rgba(182, 182, 182, 0.849);
     color: white;
-    position: ;
 }
 
 .navbar-dark .navbar-nav .active>.nav-link, .navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .nav-link.show, .navbar-dark .navbar-nav .show>.nav-link {
@@ -114,4 +113,20 @@ a {
     border-left: 0cap;
     border-right: 0cap;
     background-color: rgb(22, 22, 22);
+}
+
+#map {
+    height: 600px; 
+}
+
+body {
+    font-family: sans-serif; margin: 20px; 
+}
+
+#distance {
+    margin-top: 10px; font-weight: bold; 
+}
+
+#clearBtn { 
+    margin-top: 10px; padding: 5px 10px; font-size: 16px; 
 }
