@@ -54,7 +54,9 @@ function updateRoute() {
         'Authorization': apiKey,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ coordinates: roundTripCoords })
+      body: JSON.stringify({
+        coordinates: roundTripCoords
+      })
     })
     .then(response => {
       if (!response.ok) {
