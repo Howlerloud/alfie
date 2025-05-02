@@ -73,39 +73,61 @@ function drawRoute() {
       return response.json();
     })
     .then(data => {
-      const summary = data.features?.[0]?.properties?.summary;
-      const distanceMeters = summary?.distance;
+      console.log('API Response:', data);  // Log the full response to debug
 
-      if (distanceMeters == null) {
-        throw new Error("Route summary missing.");
+      const summary = data.features?.[0]?.properties?.summary;
+      if (!summary) {
+        throw new Error("Route summary missing in the response.");
       }
 
-      distanceMiles = (distanceMeters / 1609.34); // Keep as a number for calculation
-      valueCalc = (distanceMiles * 1.1 + 50).toFixed(2); // Calculate and then format
-      document.getElementById('distance').innerText = `Round Trip Distance: ${distanceMiles.toFixed(2)} miles`; // Format when displaying
-      document.getElementById("value").innerText = `Total Cost: £${valueCalc}`; // Display the formatted cost
+      const distanceMeters = summary.distance;
+      const durationSeconds = summary.duration;
 
+      // Check if the required data exists
+      if (distanceMeters == null || durationSeconds == null) {
+        throw new Error("Missing distance or duration in route summary.");
+      }
+
+      // Distance
+      distanceMiles = (distanceMeters / 1609.34);
+      valueCalc = (distanceMiles * 1.1 + 50).toFixed(2);
+    
+      // Travel time (convert seconds to hours and minutes)
+      const hours = Math.floor(durationSeconds / 3600);
+      const minutes = Math.round((durationSeconds % 3600) / 60);
+      const durationString = hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
+    
+      // Display
+      document.getElementById('distance').innerText = 
+        `Round Trip Distance: ${distanceMiles.toFixed(2)} miles (${durationString})`;
+      document.getElementById("value").innerText = 
+        `Total Cost: £${valueCalc}`;
+      document.getElementById('travel-time').innerText = 
+        `Travel Time: ${durationString}`;
+    
+      // Remove old route if it exists
       if (routeLayer) map.removeLayer(routeLayer);
-
+    
+      // Draw new route
       routeLayer = L.geoJSON(data, {
         style: { color: 'blue', weight: 4 }
       }).addTo(map);
     })
-
     .catch(error => {
       console.error('Routing error:', error);
-      Swal.fire(`Im sorry, the map cant access this area please select the closest road.
-        Many Thanks :)`);
+      Swal.fire(`I'm sorry, there was an issue with the routing. Please try again.`);
+      
+      console.log (`${error.message}`);
 
-        // Remove last dropoff marker
-        const lastMarker = dropoffMarkers.pop();
-        map.removeLayer(lastMarker);
+      // Remove last dropoff marker
+      const lastMarker = dropoffMarkers.pop();
+      map.removeLayer(lastMarker);
 
-        coordinates.pop();
+      coordinates.pop();
 
-        dropoffCount--;
+      dropoffCount--;
 
-        drawRoute();
+      drawRoute();
     });
 }
 
