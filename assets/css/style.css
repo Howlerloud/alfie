@@ -112,6 +112,11 @@ p {
     color: white;
     margin: 2rem;
     box-sizing: border-box;
+    color: rgb(22, 22, 22);
+}
+
+.box-header {
+    padding-top: 4px;
 }
 
 .hang {

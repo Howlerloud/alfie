@@ -15,6 +15,9 @@ let dropoffMarkers = [];
 let routeLayer = null;
 let dropoffCount = 0;
 
+let distanceMiles = 0;
+let valueCalc = 0;
+
 // === Add Fixed Pickup Marker ===
 L.marker([fixedStart[1], fixedStart[0]], {
   icon: L.icon({
@@ -71,8 +74,10 @@ function drawRoute() {
         throw new Error("Route summary missing.");
       }
 
-      const distanceMiles = (distanceMeters / 1609.34).toFixed(2);
-      document.getElementById('distance').innerText = `Round Trip Distance: ${distanceMiles} miles`;
+      distanceMiles = (distanceMeters / 1609.34); // Keep as a number for calculation
+      valueCalc = (distanceMiles * 1.1 + 50).toFixed(2); // Calculate and then format
+      document.getElementById('distance').innerText = `Round Trip Distance: ${distanceMiles.toFixed(2)} miles`; // Format when displaying
+      document.getElementById("value").innerText = `Total Cost: £${valueCalc}`; // Display the formatted cost
 
       if (routeLayer) map.removeLayer(routeLayer);
 
@@ -113,10 +118,12 @@ document.getElementById('clearBtn').addEventListener('click', () => {
   // Reset state
   coordinates = [fixedStart];
   dropoffCount = 0;
+  distanceMiles = 0;
+  document.getElementById("value").innerText =`Total cost: £0`;
   document.getElementById('distance').innerText = `Total Distance: 0 miles`;
 });
 
-// === Clear Button Handler ===
+// === Remove Button Handler ===
 document.getElementById('removeBtn').addEventListener('click', () => {
   if (dropoffMarkers.length === 0) return;
 
@@ -124,10 +131,18 @@ document.getElementById('removeBtn').addEventListener('click', () => {
   const lastMarker = dropoffMarkers.pop();
   map.removeLayer(lastMarker);
 
- coordinates.pop();
+  // Remove last dropoff coordinate
+  coordinates.pop();
 
- dropoffCount--;
+  dropoffCount--;
 
- drawRoute();
+  // If the first point (fixed start point) was removed, reset values to 0
+  if (coordinates.length === 1) { // Only the fixed start point remains
+    distanceMiles = 0;
+    valueCalc = 0;
+    document.getElementById("value").innerText = `Total cost: £0`;
+    document.getElementById('distance').innerText = `Total Distance: 0 miles`;
+  } else {
+    drawRoute();
+  }
 });
- 
