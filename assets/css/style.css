@@ -4,8 +4,17 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+body {
+    font-family: sans-serif; margin: 20px; 
+}
+
+
 a {
     color: white;
+}
+
+p {
+    margin-bottom: 0 ;
 }
 #top-bar {
     background-color: rgb(22, 22, 22);
@@ -65,6 +74,9 @@ a {
     margin: 20px;
     background-color: rgb(22, 22, 22);;
     align-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 #container-center {
@@ -87,16 +99,23 @@ a {
     }
   }
 
-.box {
-    display: inline-block;
-    width: 40%;
-    height: 40rem;
-    border-color: rgb(22, 22, 22);
-    border-style: solid;
+  .box {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 45%;
+    max-width: 45%;
+    min-width: 300px;
+    height: 50rem;
+    border: solid 2px rgb(22, 22, 22);
     border-radius: 1cm;
-    margin:3%;
     background-color: rgba(182, 182, 182, 0.849);
     color: white;
+    margin: 2rem;
+    box-sizing: border-box;
+}
+
+.hang {
+    display: block;
 }
 
 .navbar-dark .navbar-nav .active>.nav-link, .navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .nav-link.show, .navbar-dark .navbar-nav .show>.nav-link {
@@ -116,11 +135,11 @@ a {
 }
 
 #map {
-    height: 600px; 
-}
-
-body {
-    font-family: sans-serif; margin: 20px; 
+    flex: 1;
+    width: 100%;
+    border-bottom-left-radius: 1cm;
+    border-bottom-right-radius: 1cm;
+    margin-top: 1rem;
 }
 
 #distance {
@@ -129,4 +148,50 @@ body {
 
 #clearBtn { 
     margin-top: 10px; padding: 5px 10px; font-size: 16px; 
+}
+
+#removeBtn { 
+    margin-top: 10px; padding: 5px 10px; font-size: 16px; 
+}
+
+button {
+    background-color: #00bcd4;         
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 1cm;                
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    background-color: #0097a7;
+    transform: translateY(-10px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.pricing {
+    width: 35%;
+    height: 90%;
+    border-style: solid;
+    border-color: rgb(22, 22, 22);
+    border-radius: 1cm;
+    margin-top: 2%;
+    margin-left: 2%;
+    margin-right: 2%;
+    display: inline-block;
+}
+
+#distance {
+    color: rgb(255, 255, 255);
 }

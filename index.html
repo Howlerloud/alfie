@@ -66,14 +66,30 @@
     <div id="container-center">
         <div id="container">
             <div class="box">
-                <h2>Select Pickup and Dropoff Locations</h2>
+                <div>
+                <h2>Select Pickup and Drop off Locations</h2>
                 <p>Click on the map to add points (first = pickup, rest = dropoffs)</p>
-                <div id="map"></div>
-                <button id="clearBtn">Clear All</button>
-                <div id="distance">Total Distance: 0 miles</div>
+            </div>
+                <div id="map">
+                </div>
+                <!--
+                <div class="hang">
+                    <button id="clearBtn">Clear All</button>
+                    <button id="removeBtn">Remove last marker</button>
+                    <div id="distance">Total Distance: 0 miles</div>
+                </div>
+                -->
             </div>
             <div class="box">
-
+                <div class="pricing">
+                </div>
+                <div class="pricing">
+                </div>
+            </div>
+            <div class="hang">
+                <button id="clearBtn">Clear All</button>
+                <button id="removeBtn">Remove last marker</button>
+                <div id="distance">Total Distance: 0 miles</div>
             </div>
         </div>
     </div>
@@ -82,6 +98,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script> <!-- Popper -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- sweet Alert-->
     <script src="script.js"></script>
 </body>
 </html>
