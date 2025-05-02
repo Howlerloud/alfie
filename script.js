@@ -33,6 +33,12 @@ L.marker([fixedStart[1], fixedStart[0]], {
 
 // === Map Click Handler to Add Dropoffs ===
 map.on('click', (e) => {
+  // Restrict to 4 dropoff markers
+  if (dropoffCount >= 4) {
+    Swal.fire("Maximum of 4 dropoff points allowed.");
+    return;
+  }
+
   const clickedPoint = [e.latlng.lng, e.latlng.lat];
   coordinates.push(clickedPoint);
   dropoffCount++;
@@ -133,16 +139,21 @@ document.getElementById('removeBtn').addEventListener('click', () => {
 
   // Remove last dropoff coordinate
   coordinates.pop();
-
   dropoffCount--;
 
-  // If the first point (fixed start point) was removed, reset values to 0
-  if (coordinates.length === 1) { // Only the fixed start point remains
+  // If only the fixed start point remains
+  if (coordinates.length === 1) {
     distanceMiles = 0;
     valueCalc = 0;
     document.getElementById("value").innerText = `Total cost: £0`;
     document.getElementById('distance').innerText = `Total Distance: 0 miles`;
+
+    // Clear the route layer if it exists
+    if (routeLayer) {
+      map.removeLayer(routeLayer);
+      routeLayer = null;
+    }
   } else {
-    drawRoute();
+    drawRoute(); // Recalculate route with remaining points
   }
 });
