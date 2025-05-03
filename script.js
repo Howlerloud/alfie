@@ -1,24 +1,31 @@
 const apiKey = '5b3ce3597851110001cf62486e213e02beab4427912e245105956bd6';
-
-// === Initial Setup ===
 const fixedStart = [0.9195, 51.9136]; // [lng, lat]
+
 const map = L.map('map').setView([fixedStart[1], fixedStart[0]], 13);
 
-// Add OpenStreetMap tiles
+// === Load Map Tiles ===
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// === State Variables ===
-let coordinates = [fixedStart]; // Starts with the fixed pickup point
+// === State ===
+let coordinates = [fixedStart];
 let dropoffMarkers = [];
 let routeLayer = null;
 let dropoffCount = 0;
 
-let distanceMiles = 0;
-let valueCalc = 0;
+// === UI Display Helpers ===
+function updateUI(distance = 0, time = '0 min', cost = 0) {
+  document.getElementById('distance').innerText = `Total Distance: ${distance.toFixed(2)} miles (${time})`;
+  document.getElementById('travel-time').innerText = `Travel Time: ${time}`;
+  document.getElementById('value').innerText = `Total Cost: £${cost}`;
+}
 
-// === Add Fixed Pickup Marker ===
+function resetUI() {
+  updateUI(0, '0 min', 0);
+}
+
+// === Add Fixed Departure Marker ===
 L.marker([fixedStart[1], fixedStart[0]], {
   icon: L.icon({
     iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/green-dot.png',
@@ -31,32 +38,39 @@ L.marker([fixedStart[1], fixedStart[0]], {
 .bindPopup("Departure Point")
 .openPopup();
 
-// === Map Click Handler to Add Dropoffs ===
+// === Add Dropoff on Map Click ===
 map.on('click', (e) => {
-  // Restrict to 4 dropoff markers
   if (dropoffCount >= 4) {
     Swal.fire("Maximum of 4 dropoff points allowed.");
     return;
   }
 
-  const clickedPoint = [e.latlng.lng, e.latlng.lat];
-  coordinates.push(clickedPoint);
+  const point = [e.latlng.lng, e.latlng.lat];
+  coordinates.push(point);
   dropoffCount++;
 
-  const newMarker = L.marker(e.latlng)
+  const marker = L.marker(e.latlng)
     .addTo(map)
     .bindPopup(`Dropoff ${dropoffCount}`)
     .openPopup();
 
-  dropoffMarkers.push(newMarker);
+  dropoffMarkers.push(marker);
+
   drawRoute();
 });
 
-// === Function to Request and Display Route ===
+// === Draw Route and Calculate Cost/Time ===
 function drawRoute() {
-  if (coordinates.length < 2) return;
+  if (coordinates.length < 2) {
+    resetUI();
+    if (routeLayer) {
+      map.removeLayer(routeLayer);
+      routeLayer = null;
+    }
+    return;
+  }
 
-  const routeCoordinates = [...coordinates, fixedStart]; // round trip
+  const routeCoordinates = [...coordinates, fixedStart];
 
   fetch('https://api.openrouteservice.org/v2/directions/driving-car/geojson', {
     method: 'POST',
@@ -68,114 +82,71 @@ function drawRoute() {
   })
     .then(response => {
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        throw new Error(`API Error: ${response.status}`);
       }
       return response.json();
     })
     .then(data => {
-      console.log('API Response:', data);  // Log the full response to debug
-
       const summary = data.features?.[0]?.properties?.summary;
-      if (!summary) {
-        throw new Error("Route summary missing in the response.");
-      }
 
-      const distanceMeters = summary.distance;
-      const durationSeconds = summary.duration;
-
-      // Check if the required data exists
-      if (distanceMeters == null || durationSeconds == null) {
+      if (!summary || summary.distance == null || summary.duration == null) {
         throw new Error("Missing distance or duration in route summary.");
       }
 
-      // Distance
-      distanceMiles = (distanceMeters / 1609.34);
-      valueCalc = (distanceMiles * 1.1 + 50).toFixed(2);
-    
-      // Travel time (convert seconds to hours and minutes)
+      const distanceMiles = summary.distance / 1609.34;
+      const durationSeconds = summary.duration;
+      const cost = (distanceMiles * 1.1 + 50).toFixed(2);
+
       const hours = Math.floor(durationSeconds / 3600);
       const minutes = Math.round((durationSeconds % 3600) / 60);
-      const durationString = hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
-    
-      // Display
-      document.getElementById('distance').innerText = 
-        `Round Trip Distance: ${distanceMiles.toFixed(2)} miles (${durationString})`;
-      document.getElementById("value").innerText = 
-        `Total Cost: £${valueCalc}`;
-      document.getElementById('travel-time').innerText = 
-        `Travel Time: ${durationString}`;
-    
-      // Remove old route if it exists
+      const durationString = hours ? `${hours}h ${minutes}m` : `${minutes} min`;
+
+      updateUI(distanceMiles, durationString, cost);
+
       if (routeLayer) map.removeLayer(routeLayer);
-    
-      // Draw new route
+
       routeLayer = L.geoJSON(data, {
         style: { color: 'blue', weight: 4 }
       }).addTo(map);
     })
     .catch(error => {
       console.error('Routing error:', error);
-      Swal.fire(`I'm sorry, there was an issue with the routing. Please try again.`);
-      
-      console.log (`${error.message}`);
+      Swal.fire("Sorry, there was an issue with routing. Please try again.");
 
-      // Remove last dropoff marker
+      // Rollback last point
       const lastMarker = dropoffMarkers.pop();
       map.removeLayer(lastMarker);
-
       coordinates.pop();
-
       dropoffCount--;
 
       drawRoute();
     });
 }
 
-// === Clear Button Handler ===
+// === Clear All Dropoffs ===
 document.getElementById('clearBtn').addEventListener('click', () => {
-  // Remove all dropoff markers
   dropoffMarkers.forEach(marker => map.removeLayer(marker));
   dropoffMarkers = [];
 
-  // Remove route layer if exists
+  coordinates = [fixedStart];
+  dropoffCount = 0;
+
   if (routeLayer) {
     map.removeLayer(routeLayer);
     routeLayer = null;
   }
 
-  // Reset state
-  coordinates = [fixedStart];
-  dropoffCount = 0;
-  distanceMiles = 0;
-  document.getElementById("value").innerText =`Total cost: £0`;
-  document.getElementById('distance').innerText = `Total Distance: 0 miles`;
-  document.getElementById('travel-time').innerText = `Travel Time: 0 min`;
+  resetUI();
 });
 
-// === Remove Button Handler ===
+// === Remove Last Dropoff ===
 document.getElementById('removeBtn').addEventListener('click', () => {
   if (dropoffMarkers.length === 0) return;
 
-  // Remove last dropoff marker
   const lastMarker = dropoffMarkers.pop();
   map.removeLayer(lastMarker);
-
-  // Remove last dropoff coordinate
   coordinates.pop();
   dropoffCount--;
 
-  // If only the fixed start point remains
-  if (coordinates.length === 1) {
-    distanceMiles = 0;
-    valueCalc = 0;
-    document.getElementById("value").innerText = `Total cost: £0`;
-    document.getElementById('distance').innerText = `Total Distance: 0 miles`;
-    document.getElementById('travel-time').innerText = `Travel Time: 0 min`;
-  
-    // Clear the route layer if it exists
-    if (routeLayer) {
-      map.removeLayer(routeLayer);
-      routeLayer = null;
-    }
-  }
+  drawRoute();
 });
