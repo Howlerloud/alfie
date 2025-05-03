@@ -115,6 +115,21 @@ p {
     color: rgb(22, 22, 22);
 }
 
+.box-two {
+    display: inline-block;
+    flex: 1 1 45%;
+    max-width: 45%;
+    min-width: 300px;
+    height: 50rem;
+    border: solid 2px rgb(22, 22, 22);
+    border-radius: 1cm;
+    background-color: rgba(182, 182, 182, 0.849);
+    color: white;
+    margin: 2rem;
+    box-sizing: border-box;
+    color: rgb(22, 22, 22);
+}
+
 .box-header {
     padding-top: 4px;
 }
@@ -148,7 +163,14 @@ p {
 }
 
 #distance {
-    margin-top: 10px; font-weight: bold; 
+    margin-top: 10px; 
+    font-weight: bold; 
+    color: rgb(22, 22, 22);
+}
+
+#travel-time {
+    font-weight: bold; 
+    color: rgb(22, 22, 22);
 }
 
 #clearBtn { 
@@ -160,7 +182,7 @@ p {
 }
 
 button {
-    background-color: #00bcd4;         
+    background-color: #161616;         
     color: white;
     padding: 12px 24px;
     border: none;
@@ -186,8 +208,8 @@ button:active {
 }
 
 .pricing {
-    width: 35%;
-    height: 90%;
+    width: 60%;
+    height: 85%;
     border-style: solid;
     border-color: rgb(22, 22, 22);
     border-radius: 1cm;
@@ -195,8 +217,4 @@ button:active {
     margin-left: 2%;
     margin-right: 2%;
     display: inline-block;
-}
-
-#distance {
-    color: rgb(255, 255, 255);
 }

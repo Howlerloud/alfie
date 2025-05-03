@@ -169,13 +169,12 @@ document.getElementById('removeBtn').addEventListener('click', () => {
     valueCalc = 0;
     document.getElementById("value").innerText = `Total cost: £0`;
     document.getElementById('distance').innerText = `Total Distance: 0 miles`;
-
+    document.getElementById('travel-time').innerText = `Travel Time: 0 min`;
+  
     // Clear the route layer if it exists
     if (routeLayer) {
       map.removeLayer(routeLayer);
       routeLayer = null;
     }
-  } else {
-    drawRoute(); // Recalculate route with remaining points
   }
 });
