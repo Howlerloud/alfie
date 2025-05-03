@@ -149,6 +149,7 @@ document.getElementById('clearBtn').addEventListener('click', () => {
   distanceMiles = 0;
   document.getElementById("value").innerText =`Total cost: £0`;
   document.getElementById('distance').innerText = `Total Distance: 0 miles`;
+  document.getElementById('travel-time').innerText = `Travel Time: 0 min`;
 });
 
 // === Remove Button Handler ===
