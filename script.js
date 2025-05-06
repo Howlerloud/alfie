@@ -15,12 +15,13 @@ let routeLayer = null;
 let dropoffCount = 0;
 
 // === UI Display Helpers ===
-function updateUI(distance = 0, time = "0 min", cost = 0, extraDropoffFee = 0, milesCost = 0) {
+function updateUI(distance = 0, time = "0 min", cost = 0, extraDropoffFee = 0, milesCost = 0, callOut= 0) {
   document.getElementById("distance").innerText = `Total Distance: ${distance.toFixed(2)} miles (${time})`;
   document.getElementById("travel-time").innerText = `Travel Time: ${time}`;
   document.getElementById("value").innerText = `Total Cost: £${cost}`;
   document.getElementById("extra-drops-fee").innerText = `Extra Stops Fee: £${extraDropoffFee}`;
   document.getElementById("miles-cost").innerText = `Distance Cost: £${milesCost}`
+  document.getElementById("callOutFee").innerText = `Fixed Callout Fee: £${callOut}`
 }
 
 function resetUI() {
@@ -97,7 +98,8 @@ function drawRoute() {
 
       const distanceMiles = summary.distance / 1609.34;
       const durationSeconds = summary.duration;
-      const baseCost = distanceMiles * 1.1 + 60;
+      const callOut = 60;
+      const baseCost = distanceMiles * 1.1 + callOut;
       const milesCost = (distanceMiles * 1.1).toFixed(2);
       // Add £15 for each drop off after the second one (i.e., starting from the 3rd)
       const extraDropoffFee = dropoffCount > 2 ? (dropoffCount - 2) * 15 : 0;
@@ -107,7 +109,7 @@ function drawRoute() {
       const minutes = Math.round((durationSeconds % 3600) / 60);
       const durationString = hours ? `${hours}h ${minutes}m` : `${minutes} min`;
 
-      updateUI(distanceMiles, durationString, totalCost, extraDropoffFee, milesCost);
+      updateUI(distanceMiles, durationString, totalCost, extraDropoffFee, milesCost, callOut);
 
       if (routeLayer) map.removeLayer(routeLayer);
 
